@@ -58,6 +58,7 @@
 <h2>Instalace</h2>
 <ol>
     <li>Naklonujte repozitář</li>
+    <li>Vytvořte .env soubor nebo přejmenujte .env.example na .env v rootu</li>
     <li>Spusťte <code>composer install</code></li>
     <li>Spusťte server: <ul>
             <li><code>symfony server:start</code></li>
