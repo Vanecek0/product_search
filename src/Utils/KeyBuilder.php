@@ -4,12 +4,23 @@ declare(strict_types=1);
 
 namespace App\Utils;
 
+/**
+ * Builder např. cache klíčů.
+ * Implementuje ToArrayInterface.
+ *
+ * Slouží k jednotnému generování string klíčů
+ * nebo jiné storage systémy, kde potřebujeme jednoznačný klíč.
+ */
 class KeyBuilder
 {
     /**
-     * @param KeyEnumInterface $key
-     * @param ToArrayInterface $dto
-     * @return string
+     * Vytvoří klíč ve formátu: "{key}_{param1}_{param2}_..."
+     *
+     * Pokud DTO nemá žádné parametry, vrací pouze hodnotu enumu.
+     *
+     * @param KeyEnumInterface $key Enum definující typ klíče (např. PRODUCT)
+     * @param ToArrayInterface $dto DTO obsahující parametry klíče
+     * @return string sestavený klíč
      */
     public static function buildKey(KeyEnumInterface $key, ToArrayInterface $dto): string
     {
