@@ -1,10 +1,15 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Driver;
+
+use Override;
 
 class MySQLDriver implements ProductDriverInterface
 {
-    public function findById(string $id): array
+    #[Override]
+    public function findById(int $id): array
     {
         return [
             'id' => 1,

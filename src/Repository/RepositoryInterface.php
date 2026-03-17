@@ -1,8 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Repository;
 
 interface RepositoryInterface
 {
-    public function findById(string $id): array;
+    public function findById(int $id): array;
 }

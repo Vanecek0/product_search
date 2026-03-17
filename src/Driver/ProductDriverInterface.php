@@ -1,8 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Driver;
 
 interface ProductDriverInterface
 {
-    public function findById(string $id): array;
+    public function findById(int $id): array;
 }

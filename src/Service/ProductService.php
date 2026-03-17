@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Service;
 
 use App\Cache\CacheKeyEnum;
@@ -18,12 +20,15 @@ class ProductService
 
     public function findProductById(int $id): array
     {
-        $dto = new ProductCacheKeyDTO($id);
-        $key = KeyBuilder::buildKey(CacheKeyEnum::PRODUCT, $dto);
+        try {
+            $dto = new ProductCacheKeyDTO($id);
+            $key = KeyBuilder::buildKey(CacheKeyEnum::PRODUCT, $dto);
 
-        $product = $this->productCache->get($key, fn(): array => $this->productRepository->findById($id));
-
-        $this->counterService->increment($id);
-        return $product;
+            return $this->productCache->get($key, fn(): array => $this->productRepository->findById($id));
+        } catch (\Psr\Cache\InvalidArgumentException $e) {
+            return $this->productRepository->findById($id);
+        } finally {
+            $this->counterService->increment($id);
+        }
     }
 }

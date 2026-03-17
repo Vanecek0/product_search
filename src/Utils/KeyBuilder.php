@@ -1,15 +1,26 @@
 <?php
 
-namespace App\Utils;
+declare(strict_types=1);
 
-use ToArrayInterface;
+namespace App\Utils;
 
 class KeyBuilder
 {
+    /**
+     * @param KeyEnumInterface $key
+     * @param ToArrayInterface $dto
+     * @return string
+     */
     public static function buildKey(KeyEnumInterface $key, ToArrayInterface $dto): string
     {
         $parameters = $dto->toArray();
 
-        return count($parameters) === 0 ? $key->value : sprintf('%s_%s', $key->value, implode('_', $parameters));
+        if ($parameters === []) {
+            return $key->getValue();
+        }
+
+        $paramsAsString = array_map('strval', $parameters);
+
+        return sprintf('%s_%s', $key->getValue(), implode('_', $paramsAsString));
     }
 }

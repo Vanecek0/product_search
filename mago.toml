@@ -6,7 +6,11 @@ php-version = "8.4.0"
 workspace = "."
 paths = ["src/"]
 includes = ["vendor"]
-excludes = []
+excludes = [
+    "vendor/symfony/cache/Traits/ValueWrapper.php",
+    "vendor/composer/autoload_classmap.php",
+    "vendor/composer/autoload_static.php"
+]
 
 [formatter]
 print-width = 120

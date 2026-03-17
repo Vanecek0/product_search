@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Service;
 
 use App\Cache\CacheKeyEnum;
@@ -15,22 +17,30 @@ class CounterService
 
     public function increment(int $id): int
     {
-        $dto = new ProductCacheKeyDTO($id);
-        $key = KeyBuilder::buildKey(CacheKeyEnum::PRODUCT_VIEW, $dto);
+        try {
+            $dto = new ProductCacheKeyDTO($id);
+            $key = KeyBuilder::buildKey(CacheKeyEnum::PRODUCT_VIEW, $dto);
 
-        $current = $this->counterCache->get($key, static fn(): int => 0);
+            $current = $this->counterCache->get($key, static fn(): int => 0);
 
-        $newValue = $current + 1;
+            $newValue = $current + 1;
 
-        $this->counterCache->delete($key);
-
-        return $this->counterCache->get($key, fn(): int => $newValue);
+            $this->counterCache->delete($key);
+            return $this->counterCache->get($key, static fn(): int => $newValue);
+        } catch (\Psr\Cache\InvalidArgumentException $e) {
+            return 1;
+        }
     }
 
-    public function getCount($id): int
+    public function getCount(int $id): int
     {
-        $dto = new ProductCacheKeyDTO($id);
-        $key = KeyBuilder::buildKey(CacheKeyEnum::PRODUCT_VIEW, $dto);
-        return $this->counterCache->get($key, static fn(): int => 0);
+        try {
+            $dto = new ProductCacheKeyDTO($id);
+            $key = KeyBuilder::buildKey(CacheKeyEnum::PRODUCT_VIEW, $dto);
+
+            return $this->counterCache->get($key, static fn(): int => 0);
+        } catch (\Psr\Cache\InvalidArgumentException $e) {
+            return 0;
+        }
     }
 }

@@ -1,8 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Repository;
 
 use App\Driver\ProductDriverInterface;
+use Override;
 
 class ProductRepository implements RepositoryInterface
 {
@@ -10,9 +13,9 @@ class ProductRepository implements RepositoryInterface
         private ProductDriverInterface $driver,
     ) {}
 
-    public function findById(string $id): array
+    #[Override]
+    public function findById(int $id): array
     {
-        $data = $this->driver->findById($id);
-        return $data;
+        return $this->driver->findById($id);
     }
 }
