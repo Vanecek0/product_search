@@ -7,12 +7,7 @@
 # Put parameters here that don't need to change on each machine where the app is deployed
 # https://symfony.com/doc/current/best_practices.html#use-parameters-for-application-configuration
 parameters:
-    data_source: "elasticsearch"
 
-    mysql_host: ""
-    mysql_db: ""
-    mysql_user: ""
-    mysql_pass: ""
 
 services:
     # default configuration for services in *this* file
@@ -25,28 +20,25 @@ services:
     App\:
         resource: "../src/"
 
-    # ElasticSearch driver
-    #App\Driver\ElasticSearchDriverInterface:
-    #    class: App\Driver\ElasticSearchDriver
-
-    # ElasticSearch adapter
-    #App\Driver\ProductDriverInterface:
-    #    class: App\Driver\ElasticSearchProductAdapter
-    #    arguments:
-    #        $driver: '@App\Driver\ElasticSearchDriverInterface'
-
-
     # MySQL driver
-    App\Driver\MySQLDriverInterface:
-        class: App\Driver\MySQLDriver
-
-    # MySQL adapter
     App\Driver\ProductDriverInterface:
-        class: App\Driver\MySQLProductAdapter
-        arguments:
-            $driver: '@App\Driver\MySQLDriverInterface'
+        class: App\Driver\MySQLDriver
+    
+    # ElasticSearch driver
+    #App\Driver\ProductDriverInterface:
+    #    class: App\Driver\ElasticSearchDriver
 
     # Repository
     App\Repository\ProductRepository:
         arguments:
             $driver: '@App\Driver\ProductDriverInterface'
+
+    # Cache
+    App\Service\ProductService:
+        arguments:
+            $productCache: '@product_cache'
+
+    App\Service\CounterService:
+        arguments:
+            $counterCache: '@counter_cache'
+

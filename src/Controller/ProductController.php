@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Service\CounterService;
 use App\Service\ProductService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -10,30 +11,31 @@ use Symfony\Component\Routing\Attribute\Route;
 class ProductController extends AbstractController
 {
     public function __construct(
-        private ProductService $productService
+        private ProductService $productService,
+        private CounterService $counterService,
     ) {}
 
-    #[Route('/product/{id}', methods: ['GET'])]
+    #[Route('/products/{id}', methods: ['GET'])]
     public function detail(string $id): JsonResponse
     {
-        $product = $this->productService->getProduct($id);
+        $product = $this->productService->findProductById($id);
 
         if ($product === null) {
             return new JsonResponse([
-                'error' => 'Product not found'
+                'error' => 'Product not found',
             ], 404);
         }
 
         return new JsonResponse([
-            'data' => $product
+            'data' => $product,
         ]);
     }
 
-    #[Route('/counter/product/{id}', methods: ['GET'])]
-    public function productCount(int $id): JsonResponse
+    #[Route('/products/{id}/views', methods: ['GET'])]
+    public function productViews(int $id): JsonResponse
     {
         return new JsonResponse([
-            'data' => $this->productService->getRequestCounter($id)
+            'views' => $this->counterService->getCount($id),
         ]);
     }
 }

@@ -6,7 +6,9 @@ use App\Driver\ProductDriverInterface;
 
 class ProductRepository implements RepositoryInterface
 {
-    public function __construct(private ProductDriverInterface $driver) {}
+    public function __construct(
+        private ProductDriverInterface $driver,
+    ) {}
 
     public function findById(string $id): array
     {

@@ -2,35 +2,28 @@
 
 namespace App\Service;
 
+use App\Cache\CacheKeyEnum;
+use App\Cache\ProductCacheKeyDTO;
 use App\Repository\ProductRepository;
+use App\Utils\KeyBuilder;
 use Symfony\Contracts\Cache\CacheInterface;
 
 class ProductService
 {
-    public function __construct(private CacheInterface $cache, private ProductRepository $productRepository) {}
+    public function __construct(
+        private CacheInterface $productCache,
+        private CounterService $counterService,
+        private ProductRepository $productRepository,
+    ) {}
 
-    public function getProduct(int $id): array
+    public function findProductById(int $id): array
     {
-        $product = $this->cache->get(
-            "product_$id",
-            fn(): array => $this->productRepository->findById($id)
-        );
+        $dto = new ProductCacheKeyDTO($id);
+        $key = KeyBuilder::buildKey(CacheKeyEnum::PRODUCT, $dto);
 
-        $counter = $this->cache->get(
-            "product_views_$id",
-            static fn(): int => 0
-        );
+        $product = $this->productCache->get($key, fn(): array => $this->productRepository->findById($id));
 
-        $counter++;
-
-        $this->cache->delete("product_views_$id");
-        $this->cache->get("product_views_$id", static fn(): int => $counter);
-
+        $this->counterService->increment($id);
         return $product;
-    }
-
-    public function getRequestCounter($id): int
-    {
-        return $this->cache->get("product_views_$id", static fn(): int => 0);
     }
 }
